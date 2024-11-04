@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OTP Verification</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #214563; /* ছবির ব্যাকগ্রাউন্ড কালার */
+        }
+
+        .container {
+            width: 300px;
+            padding: 20px;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        h2 {
+            margin-bottom: 20px;
+            color: #333;
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+
+        button {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: none;
+            background-color: #4CAF50;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+
+        button:disabled {
+            background-color: #ccc;
+        }
+
+        p {
+            color: red;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>OTP Verification</h2>
+
+        <!-- ফোন নাম্বার ইনপুট -->
+        <input type="text" id="phoneNumberInput" placeholder="Enter your phone number">
+
+        <!-- সেণ্ড কোড বাটন -->
+        <button id="sendCodeButton">Send Code</button>
+
+        <!-- OTP ইনপুট বক্স -->
+        <input type="text" id="otpInput" placeholder="Enter OTP" style="display:none;">
+
+        <!-- সাবমিট বাটন -->
+        <button id="submitOtpButton" style="display:none;">Submit OTP</button>
+
+        <p id="message"></p>
+        <p id="timer" style="color: red; display: none;"></p>
+    </div>
+
+    <script>
+        let generatedOtp = "1234"; // স্থির OTP কোড
+        let timer;
+        const timeLimit = 120; // ২ মিনিটের সময়সীমা (সেকেন্ডে)
+        let remainingTime = timeLimit;
+
+        function startTimer() {
+            document.getElementById("timer").style.display = "block";
+            timer = setInterval(function() {
+                if (remainingTime <= 0) {
+                    clearInterval(timer);
+                    document.getElementById("otpInput").disabled = true;
+                    document.getElementById("submitOtpButton").disabled = true;
+                    document.getElementById("message").textContent = "Time expired. Please request a new OTP.";
+                    document.getElementById("timer").textContent = "";
+                } else {
+                    document.getElementById("timer").textContent = `Time left: ${remainingTime} seconds`;
+                    remainingTime--;
+                }
+            }, 1000);
+        }
+
+        document.getElementById("sendCodeButton").addEventListener("click", function() {
+            const phoneNumber = document.getElementById("phoneNumberInput").value;
+            const message = document.getElementById("message");
+
+            if (phoneNumber === "") {
+                message.textContent = "Please enter your phone number.";
+                return;
+            }
+
+            // এখানে API ব্যবহার করে OTP পাঠানোর কোড যুক্ত করতে পারেন
+            message.textContent = "OTP sent to " + phoneNumber;
+
+            // OTP ইনপুট এবং সাবমিট বাটন প্রদর্শন করুন এবং টাইমার শুরু করুন
+            document.getElementById("otpInput").style.display = "block";
+            document.getElementById("otpInput").disabled = false;
+            document.getElementById("submitOtpButton").style.display = "block";
+            document.getElementById("submitOtpButton").disabled = false;
+            
+            remainingTime = timeLimit; // টাইমার রিসেট
+            clearInterval(timer); // আগের টাইমার বন্ধ করুন, যদি চলমান থাকে
+            startTimer(); // নতুন টাইমার শুরু করুন
+        });
+
+        document.getElementById("submitOtpButton").addEventListener("click", function() {
+            const otp = document.getElementById("otpInput").value;
+            const message = document.getElementById("message");
+
+            if (otp === "") {
+                message.textContent = "Please enter the OTP.";
+                return;
+            }
+
+            // OTP যাচাই
+            if (otp === generatedOtp && remainingTime > 0) {
+                message.textContent = "OTP Verified Successfully!";
+                message.style.color = "green";
+                clearInterval(timer); // সঠিক হলে টাইমার বন্ধ করুন
+            } else {
+                message.textContent = "Invalid OTP. Please try again.";
+                message.style.color = "red";
+            }
+        });
+    </script>
+</body>
+</html>
