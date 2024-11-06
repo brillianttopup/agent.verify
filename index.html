@@ -9,57 +9,85 @@
             margin: 0;
             padding: 0;
             box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
 
         body {
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 100vh;
-            background-color: #214563; /* ছবির ব্যাকগ্রাউন্ড কালার */
+            min-height: 100vh;
+            background-color: #1c3d5a;
+            color: #f8f9fa;
         }
 
         .container {
-            width: 300px;
-            padding: 20px;
-            background-color: white;
-            border-radius: 8px;
-            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+            background-color: #2e6f95;
+            padding: 40px;
+            width: 100%;
+            max-width: 400px;
+            border-radius: 10px;
+            box-shadow: 0px 8px 15px rgba(0, 0, 0, 0.3);
             text-align: center;
         }
 
         h2 {
             margin-bottom: 20px;
-            color: #333;
+            color: #ffffff;
         }
 
+        input[type="number"],
         input[type="text"] {
             width: 100%;
-            padding: 10px;
-            margin: 10px 0;
-            border: 1px solid #ddd;
+            padding: 15px;
+            margin: 15px 0;
+            border: none;
             border-radius: 5px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            background-color: #ffffff;
+            color: #1c3d5a;
+        }
+
+        input:focus {
+            outline: none;
+            border: 2px solid #5ca4d1;
         }
 
         button {
             width: 100%;
-            padding: 10px;
-            margin: 10px 0;
-            border: none;
-            background-color: #4CAF50;
+            padding: 15px;
+            background-color: #5ca4d1;
             color: white;
             font-size: 16px;
-            cursor: pointer;
+            border: none;
             border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            margin-top: 10px;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #4a8bb5;
         }
 
         button:disabled {
-            background-color: #ccc;
+            background-color: #808080;
+            cursor: not-allowed;
         }
 
-        p {
-            color: red;
+        .timer {
+            color: #ffdd57;
+            font-weight: bold;
+            font-size: 14px;
             margin-top: 10px;
+        }
+
+        .message {
+            margin-top: 15px;
+            font-size: 14px;
+            color: #ffcccb;
         }
     </style>
 </head>
@@ -68,25 +96,25 @@
         <h2>OTP Verification</h2>
 
         <!-- ফোন নাম্বার ইনপুট -->
-        <input type="text" id="phoneNumberInput" placeholder="Enter your phone number">
+        <input type="number" id="phoneNumberInput" placeholder="Enter your phone number" min="0" oninput="this.value=this.value.replace(/[^0-9]/g,'');">
 
         <!-- সেণ্ড কোড বাটন -->
         <button id="sendCodeButton">Send Code</button>
 
         <!-- OTP ইনপুট বক্স -->
-        <input type="text" id="otpInput" placeholder="Enter OTP" style="display:none;">
+        <input type="text" id="otpInput" placeholder="Enter OTP" maxlength="6" style="display:none;">
 
         <!-- সাবমিট বাটন -->
         <button id="submitOtpButton" style="display:none;">Submit OTP</button>
 
-        <p id="message"></p>
-        <p id="timer" style="color: red; display: none;"></p>
+        <p class="message" id="message"></p>
+        <p class="timer" id="timer" style="display: none;"></p>
     </div>
 
     <script>
-        let generatedOtp = "1234"; // স্থির OTP কোড
+        let generatedOtp = "1234"; // স্থির OTP কোড (ডেমো)
         let timer;
-        const timeLimit = 120; // ২ মিনিটের সময়সীমা (সেকেন্ডে)
+        const timeLimit = 120; // ২ মিনিটের সময়সীমা
         let remainingTime = timeLimit;
 
         function startTimer() {
@@ -96,10 +124,10 @@
                     clearInterval(timer);
                     document.getElementById("otpInput").disabled = true;
                     document.getElementById("submitOtpButton").disabled = true;
-                    document.getElementById("message").textContent = "Time expired. Please request a new OTP.";
+                    document.getElementById("message").textContent = "⏰ Time expired. Please request a new OTP.";
                     document.getElementById("timer").textContent = "";
                 } else {
-                    document.getElementById("timer").textContent = `Time left: ${remainingTime} seconds`;
+                    document.getElementById("timer").textContent = `⏱️ Time left: ${remainingTime} seconds`;
                     remainingTime--;
                 }
             }, 1000);
@@ -110,12 +138,14 @@
             const message = document.getElementById("message");
 
             if (phoneNumber === "") {
-                message.textContent = "Please enter your phone number.";
+                message.textContent = "⚠️ Please enter your phone number.";
+                message.style.color = "#ffcccb";
                 return;
             }
 
             // এখানে API ব্যবহার করে OTP পাঠানোর কোড যুক্ত করতে পারেন
-            message.textContent = "OTP sent to " + phoneNumber;
+            message.textContent = `✅ OTP sent to ${phoneNumber}`;
+            message.style.color = "#b5f0a6";
 
             // OTP ইনপুট এবং সাবমিট বাটন প্রদর্শন করুন এবং টাইমার শুরু করুন
             document.getElementById("otpInput").style.display = "block";
@@ -123,8 +153,8 @@
             document.getElementById("submitOtpButton").style.display = "block";
             document.getElementById("submitOtpButton").disabled = false;
             
-            remainingTime = timeLimit; // টাইমার রিসেট
-            clearInterval(timer); // আগের টাইমার বন্ধ করুন, যদি চলমান থাকে
+            remainingTime = timeLimit;
+            clearInterval(timer); // আগের টাইমার বন্ধ করুন
             startTimer(); // নতুন টাইমার শুরু করুন
         });
 
@@ -133,18 +163,19 @@
             const message = document.getElementById("message");
 
             if (otp === "") {
-                message.textContent = "Please enter the OTP.";
+                message.textContent = "⚠️ Please enter the OTP.";
+                message.style.color = "#ffcccb";
                 return;
             }
 
             // OTP যাচাই
             if (otp === generatedOtp && remainingTime > 0) {
-                message.textContent = "OTP Verified Successfully!";
-                message.style.color = "green";
+                message.textContent = "✅ OTP Verified Successfully!";
+                message.style.color = "#b5f0a6";
                 clearInterval(timer); // সঠিক হলে টাইমার বন্ধ করুন
             } else {
-                message.textContent = "Invalid OTP. Please try again.";
-                message.style.color = "red";
+                message.textContent = "❌ Invalid OTP. Please try again.";
+                message.style.color = "#ffcccb";
             }
         });
     </script>
