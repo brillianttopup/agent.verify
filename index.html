@@ -89,26 +89,41 @@
             font-size: 14px;
             color: #ffcccb;
         }
+
+        .report-button {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #ff4d4d;
+            color: white;
+            font-size: 16px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background-color 0.3s ease;
+        }
+
+        .report-button:hover {
+            background-color: #ff3333;
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <h2>OTP Verification</h2>
 
-        <!-- ফোন নাম্বার ইনপুট -->
         <input type="number" id="phoneNumberInput" placeholder="Enter your phone number" min="0" oninput="this.value=this.value.replace(/[^0-9]/g,'');">
 
-        <!-- সেণ্ড কোড বাটন -->
         <button id="sendCodeButton">Send Code</button>
 
-        <!-- OTP ইনপুট বক্স -->
         <input type="text" id="otpInput" placeholder="Enter OTP" maxlength="6" style="display:none;">
-
-        <!-- সাবমিট বাটন -->
         <button id="submitOtpButton" style="display:none;">Submit OTP</button>
 
         <p class="message" id="message"></p>
         <p class="timer" id="timer" style="display: none;"></p>
+
+        <!-- Report Button -->
+        <button class="report-button" onclick="window.location.href='mailto:brilliantcontact.agent@gmail.com'">Report</button>
     </div>
 
     <script>
@@ -147,7 +162,6 @@
             message.textContent = `✅ OTP sent to ${phoneNumber}`;
             message.style.color = "#b5f0a6";
 
-            // OTP ইনপুট এবং সাবমিট বাটন প্রদর্শন করুন এবং টাইমার শুরু করুন
             document.getElementById("otpInput").style.display = "block";
             document.getElementById("otpInput").disabled = false;
             document.getElementById("submitOtpButton").style.display = "block";
